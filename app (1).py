@@ -1,3 +1,4 @@
+%%writefile app.py
 import streamlit as st
 import pandas as pd
 import plotly.express as px
@@ -9,11 +10,11 @@ import numpy as np
 # ==========================================
 st.set_page_config(page_title="FIFA Scout Pro", layout="wide")
 
-# Cluster Names based on your analysis
+# Cluster Names (No Emojis)
 CLUSTER_NAMES = {
-    0: "🌟 Elite Superstars (High Wage & Skill)",
-    1: "💎 Young Prospects (High Potential)",
-    2: "🛡️ Reliable Veterans (Solid & Experienced)"
+    0: "Elite Superstars (High Wage & Skill)",
+    1: "Young Prospects (High Potential)",
+    2: "Reliable Veterans (Solid & Experienced)"
 }
 
 # ==========================================
@@ -32,7 +33,7 @@ st.sidebar.divider()
 st.sidebar.header("Choose a Feature")
 menu = st.sidebar.radio(
     "Select Tool:",
-    ["🛡️ Club Strategy Scanner", "💰 The Smart Recruiter", "📝 AI Scout Report"]
+    ["Club Strategy Scanner", "The Smart Recruiter", "AI Scout Report"]
 )
 
 # ==========================================
@@ -43,7 +44,7 @@ def load_data():
     try:
         df = pd.read_csv('players_22.csv')
     except FileNotFoundError:
-        st.error("⚠️ Error: 'players_22.csv' not found.")
+        st.error("Error: 'players_22.csv' not found.")
         st.stop()
 
     if 'growth_potential' not in df.columns:
@@ -66,7 +67,7 @@ def load_model():
             scaler = pickle.load(file)
         return model, scaler
     except FileNotFoundError:
-        st.error("⚠️ Error: Model files not found.")
+        st.error("Error: Model files not found.")
         st.stop()
 
 df = load_data()
@@ -87,8 +88,8 @@ df['Cluster Name'] = df['Cluster'].map(CLUSTER_NAMES)
 # ==========================================
 
 # --- FEATURE 1: CLUB STRATEGY SCANNER ---
-if menu == "🛡️ Club Strategy Scanner":
-    st.header("🛡️ Club Strategy Scanner")
+if menu == "Club Strategy Scanner":
+    st.header("Club Strategy Scanner")
     st.write("Analyze a football club's 'DNA' to see what kind of players they recruit.")
     
     # 1. User Inputs
@@ -112,18 +113,18 @@ if menu == "🛡️ Club Strategy Scanner":
             color_discrete_sequence=px.colors.qualitative.Pastel
         )
         st.plotly_chart(fig_pie)
-        st.info("💡 Insight: This chart reveals if the club relies on Veterans, Prospects, or Superstars.")
+        st.info("Insight: This chart reveals if the club relies on Veterans, Prospects, or Superstars.")
 
 # --- FEATURE 2: THE SMART RECRUITER ---
-elif menu == "💰 The Smart Recruiter":
-    st.header("💰 The Smart Recruiter")
+elif menu == "The Smart Recruiter":
+    st.header("The Smart Recruiter")
     st.write("Find the best players that fit your budget and desired playing style.")
     
     col1, col2 = st.columns(2)
     with col1:
         target_cluster = st.selectbox("1. I want this Player Type:", list(CLUSTER_NAMES.values()))
     with col2:
-        max_wage = st.slider("2. My Weekly Budget is (€):", 1000, 300000, 20000, step=1000)
+        max_wage = st.slider("2. My Weekly Budget is (EUR):", 1000, 300000, 20000, step=1000)
     
     # Button to trigger action
     if st.button("Find Best Matches"):
@@ -143,11 +144,11 @@ elif menu == "💰 The Smart Recruiter":
             st.warning("No players found. Try increasing your budget.")
 
 # --- FEATURE 3: AI SCOUT REPORT ---
-elif menu == "📝 AI Scout Report":
-    st.header("📝 AI Scout Report")
+elif menu == "AI Scout Report":
+    st.header("AI Scout Report")
     st.write("Enter a player's raw statistics to identify which category they belong to.")
 
-    # Form (Already works well, kept as is)
+    # Form to prevent reloading
     with st.form("scout_form"):
         c1, c2, c3 = st.columns(3)
         with c1:
@@ -155,8 +156,8 @@ elif menu == "📝 AI Scout Report":
             p_potential = st.number_input("Potential Rating", 40, 99, 75)
             p_age = st.number_input("Age", 16, 40, 21)
         with c2:
-            p_wage = st.number_input("Weekly Wage (€)", 500, 1000000, 5000)
-            p_value = st.number_input("Market Value (€)", 0, 200000000, 2000000)
+            p_wage = st.number_input("Weekly Wage (EUR)", 500, 1000000, 5000)
+            p_value = st.number_input("Market Value (EUR)", 0, 200000000, 2000000)
             st.caption("*(Growth Potential calculated automatically)*")
         with c3:
             p_pass = st.number_input("Passing", 1, 99, 60)
@@ -186,6 +187,6 @@ elif menu == "📝 AI Scout Report":
                 pred_id = kmeans_model.predict(input_scaled)[0]
                 pred_name = CLUSTER_NAMES[pred_id]
                 
-                st.success(f"✅ Analysis Result: This player is a **{pred_name}**.")
+                st.success(f"Analysis Result: This player is a **{pred_name}**.")
             except Exception as e:
                 st.error(f"Error: {e}")
