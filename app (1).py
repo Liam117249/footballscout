@@ -21,10 +21,10 @@ CLUSTER_NAMES = {
 # ==========================================
 st.sidebar.header("Project Details")
 st.sidebar.text("Name: Kyaw Toe Toe Han")
-st.sidebar.text("Student ID: [ENTER ID HERE]")
-st.sidebar.text("Class: [ENTER CLASS HERE]")
-st.sidebar.text("Project: FIFA Player Clustering")
-st.sidebar.text("Professor: Tr. NN")
+st.sidebar.text("Student ID: PIUS20230059")
+st.sidebar.text("Introduction To Machine Learning")
+st.sidebar.text("Final Project")
+st.sidebar.text("Professor Dr. Nwe Nwe Htay Win")
 
 st.sidebar.divider()
 
@@ -32,7 +32,7 @@ st.sidebar.divider()
 st.sidebar.header("Choose a Feature")
 menu = st.sidebar.radio(
     "Select Tool:",
-    ["Club Strategy Scanner", "The Smart Recruiter", "AI Scout Report"]
+    ["Club Strategy Scanner", "The Smart Recruiter", "Scout Report"]
 )
 
 # ==========================================
@@ -143,8 +143,8 @@ elif menu == "The Smart Recruiter":
             st.warning("No players found. Try increasing your budget.")
 
 # --- FEATURE 3: AI SCOUT REPORT ---
-elif menu == "AI Scout Report":
-    st.header("AI Scout Report")
+elif menu == "Scout Report":
+    st.header("Scout Report")
     st.write("Enter a player's raw statistics to identify which category they belong to.")
 
     # Form to prevent reloading
