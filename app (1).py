@@ -138,7 +138,7 @@ elif menu == "The Smart Recruiter":
         
         st.subheader(f"Top 10 Recommendations for '{target_cluster}'")
         if not results.empty:
-            st.table(results[['short_name', 'age', 'overall', 'wage_eur', 'club_name']])
+            st.table(results[['short_name', 'age', 'overall', 'wage_eur', 'club_name','growth_potential']])
         else:
             st.warning("No players found. Try increasing your budget.")
 
