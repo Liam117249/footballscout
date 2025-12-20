@@ -12,7 +12,7 @@ st.set_page_config(page_title="FIFA Scout Pro", layout="wide")
 # Cluster Names (No Emojis)
 CLUSTER_NAMES = {
     0: "Young Prospects (High Potential)",
-    1: "Reliable Veterans (Solid & Experienced),
+    1: "Reliable Veterans (Solid & Experienced)",
     2: "Elite Superstars (High Wage & Skill)"
 }
 
