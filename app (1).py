@@ -11,7 +11,7 @@ import numpy as np
 # ==========================================
 st.set_page_config(page_title="FIFA Scout Pro", layout="wide")
 
-# Cluster descriptions
+# Cluster descriptions (Ensure these match your model's logic)
 CLUSTER_NAMES = {
     0: "🌟 Elite Superstars (High Wage & Skill)",
     1: "💎 Young Prospects (High Potential)",
@@ -37,19 +37,22 @@ menu = st.sidebar.radio(
 # ==========================================
 @st.cache_resource
 def load_models():
-    with open('kmeans_model.pkl', 'rb') as f:
-        model = pickle.load(f)
-    with open('scaler.pkl', 'rb') as f:
-        scaler = pickle.load(f)
-    return model, scaler
+    try:
+        with open('kmeans_model.pkl', 'rb') as f:
+            model = pickle.load(f)
+        with open('scaler.pkl', 'rb') as f:
+            scaler = pickle.load(f)
+        return model, scaler
+    except FileNotFoundError:
+        return None, None
 
-try:
-    kmeans_model, scaler = load_models()
-except FileNotFoundError:
-    st.error("⚠️ Model files not found. Please run the notebook to generate 'kmeans_model.pkl' and 'scaler.pkl'.")
+kmeans_model, scaler = load_models()
+
+if kmeans_model is None or scaler is None:
+    st.error("⚠️ Model files not found! Please run your Jupyter Notebook to generate 'kmeans_model.pkl' and 'scaler.pkl'.")
     st.stop()
 
-# Helper function to load raw data for analysis (Optional, if you have the CSV)
+# Helper function to load raw data for analysis
 @st.cache_data
 def load_raw_data():
     try:
@@ -91,7 +94,9 @@ if menu == "📝 AI Scout Report":
                 'age', 'passing', 'shooting', 'dribbling', 'growth_potential'
             ]
             
-            input_data = pd.DataFrame([[\n                p_overall, p_potential, p_wage, p_value, 
+            # FIXED LINE BELOW
+            input_data = pd.DataFrame([[
+                p_overall, p_potential, p_wage, p_value, 
                 p_age, p_pass, p_shoot, p_dribble, p_growth
             ]], columns=input_cols)
             
@@ -99,7 +104,7 @@ if menu == "📝 AI Scout Report":
             try:
                 input_scaled = scaler.transform(input_data)
                 pred_id = kmeans_model.predict(input_scaled)[0]
-                pred_name = CLUSTER_NAMES[pred_id]
+                pred_name = CLUSTER_NAMES.get(pred_id, "Unknown Cluster")
                 
                 st.success(f"✅ Analysis Result: This player is a **{pred_name}**.")
                 
@@ -137,8 +142,11 @@ elif menu == "📊 Data Analysis":
         st.subheader("1. Feature Correlation Matrix")
         st.write("This heatmap shows how different player stats correlate (e.g., Value vs. Wage).")
         
-        if set(numeric_features).issubset(df.columns):
-            corr = df[numeric_features].corr()
+        # Check if columns exist
+        available_features = [f for f in numeric_features if f in df.columns]
+        
+        if len(available_features) > 1:
+            corr = df[available_features].corr()
             fig_corr, ax = plt.subplots(figsize=(10, 6))
             sns.heatmap(corr, annot=True, cmap='coolwarm', fmt=".2f", ax=ax)
             st.pyplot(fig_corr)
@@ -147,8 +155,9 @@ elif menu == "📊 Data Analysis":
 
         # 2. Distribution Plot
         st.subheader("2. Player Age vs. Overall Rating")
-        fig_scatter = px.scatter(df, x='age', y='overall', color='potential', 
-                                 title="Age vs Overall (Colored by Potential)", opacity=0.6)
-        st.plotly_chart(fig_scatter)
+        if 'age' in df.columns and 'overall' in df.columns:
+            fig_scatter = px.scatter(df, x='age', y='overall', color='potential', 
+                                     title="Age vs Overall (Colored by Potential)", opacity=0.6)
+            st.plotly_chart(fig_scatter)
     else:
-        st.warning("⚠️ 'players_22.csv' not found. Please upload the dataset to view the analysis charts.")
+        st.warning("⚠️ 'players_22.csv' not found. Please put the CSV file in the same folder as this app.")
